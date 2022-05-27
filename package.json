@@ -1,0 +1,32 @@
+{
+  "name": "netguru-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./src/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/armstrongsouljah/netguru-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/armstrongsouljah/netguru-api/issues"
+  },
+  "homepage": "https://github.com/armstrongsouljah/netguru-api#readme",
+  "dependencies": {
+    "body-parser": "^1.20.0",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "mongodb": "^4.6.0",
+    "mongoose": "^6.3.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.16"
+  }
+}
