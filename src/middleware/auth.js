@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = process.env;
+const { JWT_SECRET='mysecret' } = process.env;
 
 const auth = async (req, res, next) => {
     /*
@@ -29,6 +29,7 @@ const auth = async (req, res, next) => {
 
         next()
     } catch (err) {
+       console.log(err)
        res.status(401).send({ message: "Not authorized to access this resource"})
     }
 }
