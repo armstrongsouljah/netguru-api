@@ -1,0 +1,20 @@
+version: '3.2'
+services:
+  movies:
+    command: node src/app.js
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '5050:5050'
+    environment:
+      - DATABASE_URL=${NET_GUR_DATABASE_URL}
+    volumes:
+      - .:/app/
+    
+  auth:
+    build: ./auth-service
+    ports:
+      - '3000:3000'
+    environment:
+      - JWT_SECRET=${JWT_SECRET}

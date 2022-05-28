@@ -1,7 +1,9 @@
-const {movieList, movieCreate} = require('../controllers/movies.controller')
 const router = require('express').Router();
 
+const {movieListController, movieCreateController} = require('../controllers/movies.controller')
+const { auth } = require('../middleware/auth');
 
-router.get('/', movieList)
-router.post('/', movieCreate)
+router.get('/', auth, movieListController)
+router.post('/', auth, movieCreateController)
+
 module.exports = router;
