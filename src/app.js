@@ -22,4 +22,4 @@ mongoose.connect(DATABASE_URL)
         })
         .catch(err => console.error(err))
 
-
+exports.app = app;
