@@ -8,6 +8,6 @@ RUN npm install
 RUN mkdir ./src
 COPY ./src ./src
 
-EXPOSE 8080
+EXPOSE 5050
 
-CMD ["node", "./src/app.js"]
+CMD ["node", "./src/server.js"]

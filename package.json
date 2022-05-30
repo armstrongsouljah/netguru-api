@@ -2,12 +2,12 @@
   "name": "netguru-api",
   "version": "1.0.0",
   "description": "",
-  "main": "./src/app.js",
+  "main": "./src/server.js",
   "scripts": {
     "test": "cross-env NODE_ENV=test jest --testTimeout=30000",
-    "start": "node app.js",
-    "dev": "nodemon app.js",
-    "jest": "jest"
+    "start": "node ./src/server.js",
+    "dev": "nodemon ./src/server.js",
+    "jest": "jest --detectOpenHandles --transformIgnorePatterns \"node_modules/(?!uuid/dist/esm-browser/)/\""
   },
   "repository": {
     "type": "git",
@@ -24,25 +24,18 @@
     "body-parser": "^1.20.0",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
-    "jest": "^28.1.0",
+    "jest": "^26.6.3",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.3",
     "mongodb": "^4.6.0",
+    "mongodb-memory-server": "^7.6.3",
     "mongoose": "^6.3.4",
-    "node-fetch": "2.0"
+    "node-fetch": "^2.6.7"
   },
   "devDependencies": {
     "@shelf/jest-mongodb": "^2.2.2",
     "cross-env": "^7.0.3",
     "nodemon": "^2.0.16",
     "supertest": "^6.2.3"
-  },
-  "jest": {
-    "preset": "@shelf/jest-mongodb",
-    "verbose": true,
-    "testEnvironment": "node",
-    "coveragePathIgnorePatterns": [
-      "/node_modules/"
-    ]
   }
 }

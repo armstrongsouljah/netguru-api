@@ -1,7 +1,7 @@
 version: '3.2'
 services:
   movies:
-    command: node src/app.js
+    command: node src/server.js
     build:
       context: .
       dockerfile: Dockerfile

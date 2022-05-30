@@ -26,7 +26,9 @@ A nodejs API that allows users to create and save a movie catalog based on the t
 - run with docker
 - in the root of the project
 - type `docker-compose up`
-- open postman using the button below
+
+- open postman documentation using the button below
+- run unit tests with `npm run jest`
 
 #### Postman Documentation
 
