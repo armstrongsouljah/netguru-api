@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET='mysecret' } = process.env;
+const { STATUS_CODES } = require('../utils');
+const { HTTP_NOT_AUTHORIZED } = STATUS_CODES
 
 const auth = async (req, res, next) => {
     /*
@@ -29,7 +31,7 @@ const auth = async (req, res, next) => {
 
         next()
     } catch (err) {
-       res.status(401).send({ message: "Not authorized to access this resource"})
+       res.status(HTTP_NOT_AUTHORIZED).send({ message: "Not authorized to access this resource"})
     }
 }
 exports.auth = auth;
