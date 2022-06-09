@@ -1,8 +1,19 @@
 const fetch = require('node-fetch');
 
 const { Movie } = require('../models/Movie');
-const { checkMonthlyLimit, checkExists, userMoviewCount } = require('../utils/index');
+const { checkMonthlyLimit, checkExists, userMoviewCount, STATUS_CODES } = require('../utils/index');
 const { MOVIES_URL, API_KEY } = process.env
+const {HTTP_BAD_REQUEST, HTTP_CREATED, HTTP_OK, HTTP_NOT_FOUND} = STATUS_CODES;
+
+
+const getMovieByTitle = async (title) => {
+    const fetchUrl = encodeURI(`${MOVIES_URL}?apikey=${API_KEY}&t=${title}`)
+    let response = await fetch(fetchUrl)
+      .then(res => res.json())
+      .then(data => data)
+      .catch(err => err)
+    return response
+}
 
 exports.movieListController = async (req, res) => {
     /*
@@ -18,7 +29,7 @@ exports.movieListController = async (req, res) => {
     let count = await userMoviewCount(userId);
     let totalPages = Math.ceil(count/limit)
                        
-    return res.json({ 
+    return res.status(HTTP_OK).json({ 
                     movies,
                     totalPages,
                     currentPage: page
@@ -35,48 +46,58 @@ exports.movieCreateController = async (req, res) => {
 
    const { title } = req.body;
    const {userId, role } = req.user;
-   const fetchUrl = encodeURI(`${MOVIES_URL}?apikey=${API_KEY}&t=${title}`)
+
+   // limit basic account to 5 movies/month
    
-   if(!title) {
-       return res.status(400).json({
-           error: 'Please provide a movie tite'
-       })
-   }
-
-   if(role == 'basic') {
-        let hasExceededLimit = await checkMonthlyLimit(userId);
-        if(hasExceededLimit) {
-            return res.status(400).json({
-                error: 'Basic accounts can only create 5 movies monthly'
-            })
-        }
-    }
-   //  get more details About the movie  
-   let resData = await fetch(fetchUrl)
-      .then(res => res.json())
-      .then(data => data)
-      .catch(err => console.error(err))
-
-    if(!resData.Error) {
-        let { Title, Released, Genre, Director } = resData;
-        if (Released == 'N/A') Released = new Date(resData.Year);
-
-        const movieExists = await checkExists(Title, userId)
-        if (movieExists) {
-            return res.status(400).json({ error: "You have already saved this movie" })
-        }
-        let movie = await Movie.create({
-            Title,
-            Released,
-            Genre,
-            Director,
-            createdBy: userId})
-            return res.json({
-                message: "Movie created succeessfully",
-                movie
+    let hasExceededLimit = await checkMonthlyLimit(userId, role);
+    if(hasExceededLimit) {
+        return res.status(HTTP_BAD_REQUEST).json({
+            error: 'Basic accounts can only create 5 movies monthly'
         })
-        
-    } else {
-        res.status(400).json({ error: resData.Error})
-    }  
+    }
+
+   //  get more details About the movie
+   if(!title) {
+    return res.status(HTTP_BAD_REQUEST).json({
+        error: 'Please provide a movie title'
+        })
+    }
+
+    let resData = await getMovieByTitle(title);
+    if(resData.Error) {
+        return res.status(HTTP_BAD_REQUEST).json({ error: resData.Error})
+    }
+
+    let { Title, Released, Genre, Director } = resData;
+    if (Released == 'N/A') Released = new Date(resData.Year);
+
+    const movieExists = await checkExists(Title, userId)
+    if (movieExists) {
+        return res.status(HTTP_BAD_REQUEST).json({ error: "You have already saved this movie" })
+    }
+    let movie = await Movie.create({
+        Title, Released,
+        Genre, Director,
+        createdBy: userId});
+
+    return res.status(HTTP_CREATED).json({
+        message: "Movie created succeessfully",
+        movie
+    })
+}
+
+exports.movieDetailController = async (req, res) => {
+    /*
+     Params: movieID
+     @Returns: Mongodb Document or empty object
+    */
+   const {movieID} = req.params;
+   const {userId} = req.user;
+   let movie = await Movie.objects.find({_id: movieID, createdBy: userId})
+   if (movie) {
+       return res.status(HTTP_OK).json({data: movie})
+   }
+   return res.status(HTTP_NOT_FOUND).json({
+       error: "Movie with this could not be found"
+   })
 }
